@@ -75,7 +75,7 @@ func (c *Celeritas) New(rootPath string) error {
 		renderer: os.Getenv("RENDERER"),
 	}
 
-	c.Render = c.createRenderer(c)
+	c.createRenderer()
 
 	return nil
 }
@@ -116,7 +116,7 @@ func (c *Celeritas) ListenAndServe() {
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%s", os.Getenv("PORT")),
 		ErrorLog:     c.ErrorLog,
-		Handler:      c.routes(),
+		Handler:      c.Routes,
 		IdleTimeout:  30 * time.Second,
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 600 * time.Second,
@@ -127,12 +127,12 @@ func (c *Celeritas) ListenAndServe() {
 	c.ErrorLog.Fatal(err)
 }
 
-func (c *Celeritas) createRenderer(cel *Celeritas) *render.Render {
+func (c *Celeritas) createRenderer() {
 	myRenderer := render.Render{
-		Renderer: cel.config.renderer,
-		RootPath: cel.RootPath,
-		Port:     cel.config.port,
+		Renderer: c.config.renderer,
+		RootPath: c.RootPath,
+		Port:     c.config.port,
 	}
 
-	return &myRenderer
+	c.Render = &myRenderer
 }
